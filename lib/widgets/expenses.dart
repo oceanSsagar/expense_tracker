@@ -2,6 +2,7 @@ import "package:flutter/material.dart";
 import "package:expense_tracker/models/expense.dart";
 import "package:expense_tracker/widgets/expense_list/expenses_list.dart";
 import "package:expense_tracker/widgets/new_expense.dart";
+import "package:expense_tracker/widgets/chart/chart.dart";
 
 class Expenses extends StatefulWidget {
   const Expenses({super.key});
@@ -13,10 +14,22 @@ class Expenses extends StatefulWidget {
 }
 
 class _ExpensesState extends State<Expenses> {
-  final List<Expense> _registeredExpense = [];
+  final List<Expense> _registeredExpense = [
+    Expense(
+        title: "party",
+        amount: 234,
+        date: DateTime.now(),
+        category: Category.leisure),
+    Expense(
+        title: "Dinner at La Pizza",
+        amount: 30,
+        date: DateTime.now(),
+        category: Category.food)
+  ];
 
   void _openAddExpenseOverlay() {
     showModalBottomSheet(
+        useSafeArea: true,
         isScrollControlled: true,
         context: context,
         builder: (ctx) {
@@ -35,11 +48,13 @@ class _ExpensesState extends State<Expenses> {
       SnackBar(
         content: const Text("Expense Deleted"),
         duration: Duration(seconds: 3),
-        action: SnackBarAction(label: "undo", onPressed: (){
-          setState(() {
-            _registeredExpense.insert(expenseIndex, expense);
-          });
-        }),
+        action: SnackBarAction(
+            label: "undo",
+            onPressed: () {
+              setState(() {
+                _registeredExpense.insert(expenseIndex, expense);
+              });
+            }),
       ),
     );
   }
@@ -62,22 +77,36 @@ class _ExpensesState extends State<Expenses> {
         onRemoveExpense: _removeExpense,
       );
     }
-
+    final width = MediaQuery.of(context).size.width;
     return Scaffold(
-        appBar: AppBar(
-          actions: [
-            IconButton(
-              onPressed: _openAddExpenseOverlay,
-              icon: Icon(Icons.add),
+      appBar: AppBar(
+        actions: [
+          IconButton(
+            onPressed: _openAddExpenseOverlay,
+            icon: Icon(Icons.add),
+          ),
+        ],
+        title: Text("Expense Tracker"),
+      ),
+      body: width < 600
+          ? Column(
+              children: [
+                Chart(
+                  expenses: _registeredExpense,
+                ),
+                Expanded(child: mainContent),
+              ],
+            )
+          : Row(
+              children: [
+                Expanded(
+                  child: Chart(
+                    expenses: _registeredExpense,
+                  ),
+                ),
+                Expanded(child: mainContent),
+              ],
             ),
-          ],
-          title: Text("Expense Tracker"),
-          backgroundColor: Colors.white,
-        ),
-        body: Column(
-          children: [
-            Expanded(child: mainContent),
-          ],
-        ));
+    );
   }
 }

@@ -11,11 +11,11 @@ class ExpenseCard extends StatelessWidget {
     return Card(
       
         child: Padding(
-          
-          padding: const EdgeInsets.fromLTRB(10,20,10,20),
-          child: Column(
-                children: [
-          Text(expense.title),
+      padding: const EdgeInsets.fromLTRB(10, 20, 10, 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(expense.title , style: Theme.of(context).textTheme.titleLarge,),
           Row(
             children: [
               Text("\$${expense.amount.toStringAsFixed(2)}"),
@@ -28,8 +28,8 @@ class ExpenseCard extends StatelessWidget {
               )
             ],
           )
-                ],
-              ),
-        ));
+        ],
+      ),
+    ));
   }
 }
